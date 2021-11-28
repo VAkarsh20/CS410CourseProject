@@ -1,3 +1,4 @@
 *.db
 *venv
 wikipedia_kiwix/data/*.zim
+*.p
