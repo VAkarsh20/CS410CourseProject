@@ -1,0 +1,1 @@
+wget https://dumps.wikimedia.org/other/kiwix/zim/wikipedia/wikipedia_en_movies_nopic_2021-10.zim
