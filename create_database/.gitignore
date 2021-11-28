@@ -1,0 +1,5 @@
+*
+!.gitignore
+!imdb_requirements.txt
+!gen_imdb_db.py
+!README.md

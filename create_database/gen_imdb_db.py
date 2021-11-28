@@ -1,5 +1,4 @@
 import os, wget, gzip, shutil, sqlite3
-from numpy import left_shift
 import pandas as pd
 
 """
@@ -173,7 +172,7 @@ def delete_tsvs():
 
 
 if __name__ == "__main__":
-    # download_files()
+    download_files()
     titles, names = load_data()
     make_db(titles, names)
     test_db()
