@@ -2,3 +2,5 @@
 *venv
 wikipedia_kiwix/data/*.zim
 *.p
+*.tsv
+*.csv

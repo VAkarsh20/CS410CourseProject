@@ -1,4 +1,4 @@
-import os, wget, gzip, shutil, sqlite3, glob
+import os, wget, gzip, shutil, sqlite3, glob, tqdm, requests, backoff, urllib, pickle
 import pandas as pd
 
 """
@@ -133,6 +133,56 @@ def load_data():
     return titles, names
 
 
+# Downloads posters for every title in the dataframe
+def fetch_posters(titles, api_key):
+    TMDB_API_URL = "https://api.themoviedb.org/3/movie/{}?api_key={}"
+    TMDB_ROOT_POSTER_URL = "https://image.tmdb.org/t/p/w200"
+    DEFAULT_POSTER_URL = (
+        "https://i.pinimg.com/736x/b6/01/18/b6011825cf909d54d93145b53bdb0bfb.jpg"
+    )
+
+    # Function to fetch a single poster URL
+    @backoff.on_exception(backoff.expo, urllib.error.HTTPError)
+    def fetch_poster_url(tconst):
+        result = requests.get(TMDB_API_URL.format(tconst, api_key)).json()
+        if "poster_path" in result and result["poster_path"] != None:
+            return f"{TMDB_ROOT_POSTER_URL}{result['poster_path']}"
+        return DEFAULT_POSTER_URL
+
+    # Load cache if it exists
+    posters = []
+    cache_hits = 0
+    if os.path.exists("posters.p"):
+        with open("posters.p", "rb") as f:
+            posters = pickle.load(f)
+
+    # Get URLs
+    print("Downloading poster URLs...")
+    titles_bar = tqdm.tqdm(titles.index)
+    for i, tconst in enumerate(titles_bar):
+
+        # posters[i] already exists in cache if i < len(posters)
+        if i < len(posters):
+            assert posters[i] is not None
+            cache_hits += 1
+            continue
+
+        posters.append(fetch_poster_url(tconst))
+
+        # Cache write
+        if i % 100 == 0 or i == len(titles.index) - 1:
+            with open("posters.p", "wb") as f:
+                pickle.dump(posters, f)
+
+        titles_bar.set_postfix({"Cache hits": cache_hits})
+
+    # Update dataframe
+    titles = titles.copy()
+    titles["poster"] = posters
+
+    return titles
+
+
 # Generates a Sqlite3 database for the movie/name data
 def make_db(titles, names):
 
@@ -175,8 +225,29 @@ def delete_tsvs():
 
 
 if __name__ == "__main__":
-    download_files()
-    titles, names = load_data()
+
+    download_posters = (
+        input("Download movie posters? This might take a long time! y/N\n> ")
+        .strip()
+        .lower()
+    )
+    api_key = None
+    if len(download_posters) == 0:
+        download_posters = "n"
+    elif download_posters == "y":
+        api_key = input("API key for TMDB (themoviedb.org)\n> ").strip()
+    elif download_posters not in ["y", "n"]:
+        print("Invalid input!")
+        exit(1)
+
+    # download_files()
+    # titles, names = load_data()
+    titles = pd.read_csv("titles.csv")
+
+    # optionally fetch posters
+    if download_posters == "y":
+        titles = fetch_posters(titles, api_key)
+
     make_db(titles, names)
     test_db()
     delete_tsvs()

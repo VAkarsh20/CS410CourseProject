@@ -2,7 +2,7 @@
 
 The back-end for this project principally relies on two datasets:
 
-* Metadata about movies (titles, crew, genre, etc) from IMDB
+* Metadata about movies (titles, crew, genre, etc) from IMDB and poster URLs from TMDB
 * Textual descriptions of movies (reviews, summary, etc) from Wikipedia
 
 The scripts in this folder are meant to assist in the creation of two datasets:
@@ -94,3 +94,9 @@ This will take a while (~6 hours) due to the large amount of queries to Wikidata
 
 [imdb.db](https://drive.google.com/file/d/1jlYawRw3HDthGsxZNQYrWliYEGztTVCQ/view?usp=sharing)
 [wikipedia.p](https://drive.google.com/file/d/1LDV9-5GKlacbMOxiZ613_69EL4G7aQXS/view?usp=sharing)
+
+## Credits
+
+* [IMDB](https://www.imdb.com)
+* [Wikipedia](https://www.wikipedia.org), [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page)
+* [The Movie Database (TMDB)](https://www.themoviedb.org)
