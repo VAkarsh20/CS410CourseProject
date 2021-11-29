@@ -88,9 +88,9 @@ The root path is `http://localhost:8888/wikipedia_en_movies_nopic_2021-10/A/`. T
 
 Now, we can open up `gen_wikipedia_db.py` and replace `LOCAL_WIKIPEDIA_ROOT` at the top with the root path we just found. Make sure the script is in the same folder as `imdb.db`, setup the virtual environment/dependencies as described in the `imdb.db` section, and then go ahead and run the script: `python gen_wikipedia_db.py`.
 
-This will take a while (~6 hours) due to the large amount of queries to Wikidata and our local Wikipedia instance. The end result should be `wikipedia.p`, which is a [pickled](https://docs.python.org/3/library/pickle.html) Python dictionary with string keys (*tconst*s) and string values (the Wikipedia critical reviews/response section from that title's page). This dataset can be loaded directly into memory since it's rather small.
+This will take a while (~6 hours) due to the large amount of queries to Wikidata and our local Wikipedia instance. The end result should be `wikipedia.p`, which is a [pickled](https://docs.python.org/3/library/pickle.html) Python dictionary with string keys (*tconst*s) and string values (the Wikipedia critical reviews/response section from that title's page). This dataset can be loaded directly into memory since it's rather small (and will probably need to be to do any meaningful document ranking!)
 
 ## Downloads
 
-[imdb.db]()
-[wikipedia.p]()
+[imdb.db](https://drive.google.com/file/d/1jlYawRw3HDthGsxZNQYrWliYEGztTVCQ/view?usp=sharing)
+[wikipedia.p](https://drive.google.com/file/d/1LDV9-5GKlacbMOxiZ613_69EL4G7aQXS/view?usp=sharing)

@@ -1,4 +1,4 @@
-import os, wget, gzip, shutil, sqlite3
+import os, wget, gzip, shutil, sqlite3, glob
 import pandas as pd
 
 """
@@ -22,8 +22,10 @@ def download_files():
 
     # Deletes all existing downloads
     def delete_downloads():
-        os.system("rm *.tsv.gz >/dev/null 2>&1")
-        os.system("rm *.tmp >/dev/null 2>&1")
+        files = list(glob.glob("*.tsv.gz"))
+        files.extend(list(glob.glob("*.tmp")))
+        for file in files:
+            os.remove(file)
 
     delete_downloads()
     for tsvname, link in LINKS.items():
@@ -168,7 +170,8 @@ def test_db():
 
 # Deletes .tsv files downloaded from IMDB
 def delete_tsvs():
-    os.system("rm *.tsv >/dev/null 2>&1")
+    for file in glob.glob("*.tsv"):
+        os.remove(file)
 
 
 if __name__ == "__main__":

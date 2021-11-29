@@ -1,4 +1,4 @@
-import os, sqlite3, requests, pickle, backoff, urllib
+import os, sqlite3, requests, pickle, backoff, urllib, shutil
 from bs4 import BeautifulSoup
 from SPARQLWrapper import SPARQLWrapper, JSON
 from tqdm import tqdm
@@ -131,5 +131,5 @@ if __name__ == "__main__":
     with open("movie_responses.p", "wb") as f:
         pickle.dump(movie_responses, f)
 
-    # Move movie_responses.p to wikipedia.p
-    os.system("cp movie_responses.p wikipedia.p")
+    # Copy movie_responses.p to wikipedia.p
+    shutil.copyfile("movie_responses.p", "wikipedia.p")
