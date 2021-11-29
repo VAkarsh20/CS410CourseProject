@@ -5,14 +5,14 @@ The back-end for this project principally relies on two datasets:
 * Metadata about movies (titles, crew, genre, etc) from IMDB
 * Textual descriptions of movies (reviews, summary, etc) from Wikipedia
 
-The scripts in this folder are meant to assist in the creation of two database files:
+The scripts in this folder are meant to assist in the creation of two datasets:
 
-* imdb.db
-* wikipedia.db
+* imdb.db (Sqlite3 DB, ~1 GB)
+* wikipedia.p (Python dicctionary, ~15 MB)
 
-**Note: These database files are rather large, and take a non-trivial amount of time to generate! These files have been commited to Git LFS and should be checked out directly to be used in the application. The scripts located in this repo have only been uploaded for reproducability. See the [Downloads](#downloads) section for more information.**
+**Note: These database files take a non-trivial amount of time to generate! These files have been uploaded elsewhere and should be checked out directly to be used in the application. The scripts located in this repo have only been uploaded for reproducability. See the [Downloads](#downloads) section for more information.**
   
-Both database files are indexed by IMDB "title numbers" (also known as *tconst*s). These identifiers generally take the form of `tt<some number>`. For example, the IMDB title number for the movie *The Incredible HulK (2008)* is `tt0800080`. These identifiers are used for two reasons:
+Both data files are indexed by IMDB "title numbers" (also known as *tconst*s). These identifiers generally take the form of `tt<some number>`. For example, the IMDB title number for the movie *The Incredible HulK (2008)* is `tt0800080`. These identifiers are used for two reasons:
 
 * All of IMDB's publicly available datasets are keyed by *tconst*.
 * Wikidata allows us to query the corresponding Wikipedia page for a movie using its tconst.
@@ -56,11 +56,11 @@ Use the python script `gen_imdb_db.py` to generate `imdb.py`. Python version >= 
 2. Install the required Python dependencies with `pip install -r requirements.txt`.
 3. Run the script with `python gen_imdb_db.py`. The script will download the latest datasets from IMDB's website, load them into memory, extract and merge the relevant metadata, and export the data into a single Sqlite3 database called `imdb.db`. The script will also perform a single test query against the database and print the results as a quick sanity check.
 
-### `wikipedia.db`
+### `wikipedia.p`
 
 **Note: We will need the IMDB database generated in the previous step to make this database.**
 
-Generating this database is a bit trickier, for two reasons.
+Generating this dataset is a bit trickier, for two reasons.
 
 1. There is no obvious method for locating the corresponding Wikipedia page for a given IMDB entry.
 2. We don't want to spam Wikipedia's services with requests to perform large amounts of crude web scraping. Wikipedia is a free service and it would be very rude to hammer their servers for a school project.
@@ -88,6 +88,9 @@ The root path is `http://localhost:8888/wikipedia_en_movies_nopic_2021-10/A/`. T
 
 Now, we can open up `gen_wikipedia_db.py` and replace `LOCAL_WIKIPEDIA_ROOT` at the top with the root path we just found. Make sure the script is in the same folder as `imdb.db`, setup the virtual environment/dependencies as described in the `imdb.db` section, and then go ahead and run the script: `python gen_wikipedia_db.py`.
 
-This will take a while due to the large amount of queries to Wikidata and our local Wikipedia instance. The end result should be `wikipedia.db`, which is a database with the following schema:
+This will take a while (~6 hours) due to the large amount of queries to Wikidata and our local Wikipedia instance. The end result should be `wikipedia.p`, which is a [pickled](https://docs.python.org/3/library/pickle.html) Python dictionary with string keys (*tconst*s) and string values (the Wikipedia critical reviews/response section from that title's page). This dataset can be loaded directly into memory since it's rather small.
 
 ## Downloads
+
+[imdb.db]()
+[wikipedia.p]()

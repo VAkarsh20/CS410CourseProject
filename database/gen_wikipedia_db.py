@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
         # Check if we have a critic response in our cache
         response_text = None
-        if tconst in movie_responses and len(str(movie_responses[tconst])) > 20:
+        if tconst in movie_responses:
             response_text = movie_responses[tconst]
             response_cache_hits += 1
         # Otherwise query """Wikipedia""" if we have a URL
@@ -109,6 +109,9 @@ if __name__ == "__main__":
             if response_section is not None:
                 response_text = response_section.parent.text
                 movie_responses[tconst] = response_text
+        elif url is None:
+            # No wikipedia URL, so we have nothing
+            movie_responses[tconst] = ""
 
         # Update our cache every 100 lookups
         if i % 100 == 0:
@@ -121,3 +124,12 @@ if __name__ == "__main__":
         movies_bar.set_postfix(
             {"URL cache": url_cache_hits, "Response cache": response_cache_hits}
         )
+
+    # Final cache update
+    with open("movie_urls.p", "wb") as f:
+        pickle.dump(movie_urls, f)
+    with open("movie_responses.p", "wb") as f:
+        pickle.dump(movie_responses, f)
+
+    # Move movie_responses.p to wikipedia.p
+    os.system("cp movie_responses.p wikipedia.p")
