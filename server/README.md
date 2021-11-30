@@ -3,11 +3,11 @@
 This folder contains the back-end service used for the Chrome extension. It is a relatively straightforward Flask app that exposes two endpoints:
 
 * `GET /movie?tconst=<some tconst>` returns information about a single movie, including its title, poster, and other metadata.
-* `GET /similar?tconst=<some tconst>&by=<some filter>` returns a list of similar movies for a given title, where the optional `by` parameter applies a constraint to the similar movies. `by` can take on the value `directorwriter` or `genre` which constrains the similar movies to be by the same director(s)/writer(s) or the same genre, respectively.
+* `GET /similar?tconst=<some tconst>` returns a set of lists of similar movies for a given title. The set contains a list of similar movies in general, a list of similar movies by the same director/writer, and a list of similar movies in the same genre.
 
 ### Setup
 
-Running this server requires two data files: `imdb.db` and `wikipedia.p`. See the [README.md](https://github.com/VAkarsh20/CS410CourseProject/blob/main/database/README.md) from the database folder, which includes download links for these files. Place these files in the same directory as `app.py`, or specify their exact path by changing the constants at the top of `app.py`. Dummy versions of the above endpoints (`/dummy_movie` and `/dummy_similar`) for testing purposes are provided which don't require the database files and return static results. These endpoints have the same schema as the main ones.
+Running this server requires two data files: `imdb.db` and `wikipedia.p`. See the [README.md](https://github.com/VAkarsh20/CS410CourseProject/blob/main/database/README.md) from the database folder, which includes download links for these files near the bottom. Place these files in the same directory as `app.py`, or specify their exact path by changing the constants at the top of `app.py`. Dummy versions of the above endpoints (`/dummy_movie` and `/dummy_similar`) for testing purposes are provided which don't require the database files and return fixed results. These endpoints have the same schema as their real counterparts.
 
 Once the data files have been acquired, running the server is rather simple, provided Python >=3.6 is installed.
 
@@ -49,7 +49,7 @@ Once the data files have been acquired, running the server is rather simple, pro
 ### Schema - `/movie`
 
 A `movie` object has the following JSON schema:
-```
+```json
 {
   "adult": bool,
   "directorNames": Array[string],
@@ -71,3 +71,12 @@ A `movie` object has the following JSON schema:
 `GET /movie?tconst=<some tconst>` simply returns a single movie.
 
 ### Schema - `/similar`
+
+`GET /similar?tconst=<some tconst>` simply returns a set of lists of similar movies with the following schema.
+
+```json
+{
+  "all": Array[movie], // similar movies (in general)
+  "directorwriter": Array[movie], // similar movies by the same director/writer
+  "genre": Array[movie] // similar movies in the same genre
+}
