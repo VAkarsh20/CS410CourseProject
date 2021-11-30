@@ -7,7 +7,7 @@ This folder contains the back-end service used for the Chrome extension. It is a
 
 ### Setup
 
-Running this server requires two data files: `imdb.db` and `wikipedia.p`. See the [README.md](https://github.com/VAkarsh20/CS410CourseProject/blob/main/database/README.md) from the database folder, which includes download links for these files. Place these files in the same directory as `app.py`, or specify their exact path by changing the constants at the top of `app.py`. Dummy versions of the above endpoints (`/dummy_movie` and `/dummy_similar`) for testing purposes are provided which don't require the database files and return static results.
+Running this server requires two data files: `imdb.db` and `wikipedia.p`. See the [README.md](https://github.com/VAkarsh20/CS410CourseProject/blob/main/database/README.md) from the database folder, which includes download links for these files. Place these files in the same directory as `app.py`, or specify their exact path by changing the constants at the top of `app.py`. Dummy versions of the above endpoints (`/dummy_movie` and `/dummy_similar`) for testing purposes are provided which don't require the database files and return static results. These endpoints have the same schema as the main ones.
 
 Once the data files have been acquired, running the server is rather simple, provided Python >=3.6 is installed.
 
@@ -18,6 +18,9 @@ Once the data files have been acquired, running the server is rather simple, pro
 ```json
 {
   "adult": false,
+  "directorNames": [
+    "Justin Lin"
+  ],
   "directors": [
     "nm0510912"
   ],
@@ -26,15 +29,45 @@ Once the data files have been acquired, running the server is rather simple, pro
     "Crime",
     "Thriller"
   ],
+  "poster": "https://image.tmdb.org/t/p/w200/cm2ffqb3XovzA5ZSzyN3jnn8qv0.jpg",
   "rating": 6.0,
   "ratingVotes": 259332,
   "region": "US",
   "runtime": 104,
   "tconst": "tt0463985",
   "title": "The Fast and the Furious: Tokyo Drift",
+  "writerNames": [
+    "Chris Morgan"
+  ],
   "writers": [
     "nm0604555"
   ],
   "year": 2006
 }
 ```
+
+### Schema - `/movie`
+
+A `movie` object has the following JSON schema:
+```
+{
+  "adult": bool,
+  "directorNames": Array[string],
+  "directors": Array[nconst (string)],
+  "genres": Array[string],
+  "poster": URL (string),
+  "rating": float,
+  "ratingVotes": int,
+  "region": string,
+  "runtime": int,
+  "tconst": tconst (string),
+  "title": string,
+  "writerNames": Array[string],
+  "writers": Array[nconst (string)],
+  "year": int
+}
+```
+
+`GET /movie?tconst=<some tconst>` simply returns a single movie.
+
+### Schema - `/similar`
