@@ -19,22 +19,10 @@ Both data files are indexed by IMDB "title numbers" (also known as *tconst*s). T
 
 ### `imdb.db`
 
-`imdb.db` is a Sqlite3 database containing two tables. The first table, `titles`, contains metadata about the movies found in IMDB: 
+`imdb.db` is a Sqlite3 database containing two tables. The first table, `titles`, contains metadata about the movies found in IMDB. Poster URLs were also pulled from TMDB.
 
 ```sql
-CREATE TABLE "titles" (
-  "tconst" TEXT,
-  "title" TEXT,
-  "adult" TEXT,
-  "year" INTEGER,
-  "runtime" INTEGER,
-  "genres" TEXT,
-  "region" TEXT,
-  "directors" TEXT,
-  "writers" TEXT,
-  "rating" REAL,
-  "ratingVotes" INTEGER
-);
+
 ```
 
 Notice that each movie has a "directors" and "writers" field. These fields contain comma-delimited lists of IMDB name identifiers, or *nconst*s. These directors and writers can be looked up in the `names` table:
@@ -53,8 +41,9 @@ CREATE TABLE IF NOT EXISTS "names" (
 Use the python script `gen_imdb_db.py` to generate `imdb.py`. Python version >= 3.6 is required. **Warning: On my machine, this script consumed at peak about 8 GB of memory. It also downloads a decent amount of data. The resulting database file is about 1 GB.**
 
 1. (Optional) Setup a virtual environment with `python -m venv venv`, and load it with `source venv/bin/activate`.
-2. Install the required Python dependencies with `pip install -r requirements.txt`.
-3. Run the script with `python gen_imdb_db.py`. The script will download the latest datasets from IMDB's website, load them into memory, extract and merge the relevant metadata, and export the data into a single Sqlite3 database called `imdb.db`. The script will also perform a single test query against the database and print the results as a quick sanity check.
+2. (Optional) Get an API key from [TMDB](https://www.themoviedb.org/settings/api) to download poster URLs for movies.
+3. Install the required Python dependencies with `pip install -r requirements.txt`.
+4. Run the script with `python gen_imdb_db.py`. The script will ask if you want to download poster URLs, and ask for an API key if you say yes. The script will download the latest datasets from IMDB's website, load them into memory, extract and merge the relevant metadata, and export the data (including poster URLs if specified) into a single Sqlite3 database called `imdb.db`. The script will also perform a single test query against the database and print the results as a quick sanity check.
 
 ### `wikipedia.p`
 

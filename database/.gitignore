@@ -4,3 +4,4 @@ wikipedia_kiwix/data/*.zim
 *.p
 *.tsv
 *.csv
+__pycache__

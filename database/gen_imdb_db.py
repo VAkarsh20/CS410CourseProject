@@ -145,40 +145,54 @@ def fetch_posters(titles, api_key):
     @backoff.on_exception(backoff.expo, urllib.error.HTTPError)
     def fetch_poster_url(tconst):
         result = requests.get(TMDB_API_URL.format(tconst, api_key)).json()
+        # Got a poster
         if "poster_path" in result and result["poster_path"] != None:
             return f"{TMDB_ROOT_POSTER_URL}{result['poster_path']}"
-        return DEFAULT_POSTER_URL
+        # Got a valid reply, but no poster is available
+        elif "id" in result and "title" in result:
+            return DEFAULT_POSTER_URL
+        # No entry in TMDB
+        elif "status_code" in result and result["status_code"] == 34:
+            return DEFAULT_POSTER_URL
+        else:
+            print(result)
+            return DEFAULT_POSTER_URL
 
     # Load cache if it exists
-    posters = []
+    posters = {}
     cache_hits = 0
+
     if os.path.exists("posters.p"):
         with open("posters.p", "rb") as f:
             posters = pickle.load(f)
 
     # Get URLs
     print("Downloading poster URLs...")
+    missing = 0
     titles_bar = tqdm.tqdm(titles.index)
     for i, tconst in enumerate(titles_bar):
 
-        # posters[i] already exists in cache if i < len(posters)
-        if i < len(posters):
-            assert posters[i] is not None
+        url = None
+        # Already cached
+        if tconst in posters:
             cache_hits += 1
+            url = posters[tconst]
             continue
 
-        posters.append(fetch_poster_url(tconst))
+        posters[tconst] = url = fetch_poster_url(tconst)
+        if url == DEFAULT_POSTER_URL:
+            missing += 1
 
         # Cache write
         if i % 100 == 0 or i == len(titles.index) - 1:
             with open("posters.p", "wb") as f:
                 pickle.dump(posters, f)
 
-        titles_bar.set_postfix({"Cache hits": cache_hits})
+        titles_bar.set_postfix({"cache": cache_hits, "missing": missing})
 
     # Update dataframe
     titles = titles.copy()
-    titles["poster"] = posters
+    titles["poster"] = pd.Series(posters)
 
     return titles
 
@@ -240,9 +254,9 @@ if __name__ == "__main__":
         print("Invalid input!")
         exit(1)
 
-    # download_files()
-    # titles, names = load_data()
-    titles = pd.read_csv("titles.csv")
+    download_files()
+    titles, names = load_data()
+    # titles = pd.read_csv("titles.csv").set_index("tconst")
 
     # optionally fetch posters
     if download_posters == "y":
