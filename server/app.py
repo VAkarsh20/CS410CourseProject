@@ -75,7 +75,7 @@ def get_similar():
     # Invalid request
     if "tconst" not in request.args or (
         "by" in request.args
-        and request.args["by"].lower() not in ["director", "writer", "genre"]
+        and request.args["by"].lower() not in ["directorwriter", "genre"]
     ):
         return "Invalid request!", 400
 
