@@ -22,6 +22,20 @@ Both data files are indexed by IMDB "title numbers" (also known as *tconst*s). T
 `imdb.db` is a Sqlite3 database containing two tables. The first table, `titles`, contains metadata about the movies found in IMDB. Poster URLs were also pulled from TMDB.
 
 ```sql
+CREATE TABLE IF NOT EXISTS "titles" (
+"tconst" TEXT,
+  "title" TEXT,
+  "adult" TEXT,
+  "year" INTEGER,
+  "runtime" INTEGER,
+  "genres" TEXT,
+  "region" TEXT,
+  "directors" TEXT,
+  "writers" TEXT,
+  "rating" REAL,
+  "ratingVotes" INTEGER,
+  "poster" TEXT
+);
 
 ```
 
@@ -81,8 +95,8 @@ This will take a while (~6 hours) due to the large amount of queries to Wikidata
 
 ## Downloads
 
-[imdb.db](https://drive.google.com/file/d/1jlYawRw3HDthGsxZNQYrWliYEGztTVCQ/view?usp=sharing)
-[wikipedia.p](https://drive.google.com/file/d/1LDV9-5GKlacbMOxiZ613_69EL4G7aQXS/view?usp=sharing)
+* [imdb.db](https://drive.google.com/file/d/1jlYawRw3HDthGsxZNQYrWliYEGztTVCQ/view?usp=sharing)
+* [wikipedia.p](https://drive.google.com/file/d/1LDV9-5GKlacbMOxiZ613_69EL4G7aQXS/view?usp=sharing)
 
 ## Credits
 

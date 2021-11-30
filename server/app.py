@@ -39,6 +39,7 @@ def get_movie():
         writers,
         rating,
         ratingVotes,
+        poster,
     ) = rows[-1]
 
     # cast to bool
