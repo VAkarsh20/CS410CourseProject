@@ -267,17 +267,22 @@ def lookup_movie(tconst):
     }
 
 
-# Returns singleton instances of the IMDB Sqlite3 database and Wikipedia dictionary
+# Returns singleton instances of the IMDB Sqlite3 database and Wikipedia dictionary,
+# and stores them on the global application context.
 def get_dbs():
     imdb = getattr(g, "_imdb", None)
     if imdb is None:
-        imdb = g._imdb = sqlite3.connect(IMDB_DB)
+        imdb = g._imdb = load_imdb()
     wikipedia = getattr(g, "_wikipedia", None)
     if wikipedia is None:
-        with open(WIKIPEDIA_DB, "rb") as f:
-            wikipedia = g._wikipedia = pickle.load(f)
+        wikipedia = g._wikipedia = load_wikipedia()
 
     return imdb, wikipedia
+
+
+# Loading helpers for IMDB/Wikipedia datasets
+load_imdb = lambda: sqlite3.connect(IMDB_DB)
+load_wikipedia = lambda: pickle.load(open(WIKIPEDIA_DB, "rb"))
 
 
 # Automatically close the DB connection on application exit
