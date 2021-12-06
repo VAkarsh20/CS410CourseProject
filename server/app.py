@@ -38,7 +38,10 @@ def get_similar():
     # Parse limit, if provided
     limit = None
     if "limit" in request.args:
-        limit = int(request.args["limit"])
+        try:
+            limit = int(request.args["limit"])
+        except:
+            return "Invalid request!", 400
 
     # Extract title ID
     tconst = request.args["tconst"]

@@ -1,12 +1,14 @@
-import os, tqdm, pickle, re, string, itertools, math
+import os, pickle, re, string, math
 import numpy as np
 from multiprocessing import Pool, cpu_count
 from nltk.tokenize import word_tokenize
-from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from bidict import bidict
+
+# from nltk.stem.porter import PorterStemmer
+
 
 # File to store pickled model resources in
 MODEL_FILE = "model_res.p"
