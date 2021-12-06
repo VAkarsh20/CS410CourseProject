@@ -1,6 +1,7 @@
 from flask import Flask, request, g
 from model import init_model, get_movie_similarity_scores
-import sqlite3, pickle
+from dummy import dummy_movie, dummy_similar
+import sqlite3, pickle, time
 
 
 # Change these if you are using different locations for the data files!
@@ -43,166 +44,23 @@ def get_similar():
     # Extract filters (directors, writers, genres)
     by = None if "by" not in request.args else request.args["by"]
 
-    get_movie_similarity_scores(tconst)
+    # Get [(tconst, similarity score)] list from model
+    similarity_scores = get_movie_similarity_scores(tconst)
 
-    _, wikipedia = get_dbs()
-    return wikipedia[tconst]
+    # Remap tconsts --> movie info
+    similarity_scores = list(map())
 
 
 # Dummy endpoint for /movie which doesn't require a database
 @app.route("/dummy_movie")
 def get_dummy_movie():
-    return {
-        "adult": False,
-        "directorNames": ["Justin Lin"],
-        "directors": ["nm0510912"],
-        "genres": ["Action", "Crime", "Thriller"],
-        "poster": "https://image.tmdb.org/t/p/w200/cm2ffqb3XovzA5ZSzyN3jnn8qv0.jpg",
-        "rating": 6.0,
-        "ratingVotes": 259332,
-        "region": "US",
-        "runtime": 104,
-        "tconst": "tt0463985",
-        "title": "The Fast and the Furious: Tokyo Drift",
-        "writerNames": ["Chris Morgan"],
-        "writers": ["nm0604555"],
-        "year": 2006,
-    }, 200
+    return dummy_movie
 
 
 # Dummy endpoint for /similar which doesn't require a database
 @app.route("/dummy_similar")
 def get_dummy_similar():
-    return {
-        "all": [
-            {
-                "adult": False,
-                "directorNames": ["Dominic Sena"],
-                "directors": ["nm0784061"],
-                "genres": ["Action", "Crime", "Thriller"],
-                "poster": "https://image.tmdb.org/t/p/w200/lFsJJjnGcNhewSIM9XBTaHsI2et.jpg",
-                "rating": 6.5,
-                "ratingVotes": 269640,
-                "region": "US",
-                "runtime": 118,
-                "tconst": "tt0187078",
-                "title": "Gone in 60 Seconds",
-                "writerNames": ["H.B. Halicki", "Scott Rosenberg"],
-                "writers": ["nm0355181", "nm0003298"],
-                "year": 2000,
-            },
-            {
-                "adult": False,
-                "directorNames": ["Rob Cohen"],
-                "directors": ["nm0003418"],
-                "genres": ["Action", "Crime", "Thriller"],
-                "poster": "https://image.tmdb.org/t/p/w200/gqY0ITBgT7A82poL9jv851qdnIb.jpg",
-                "rating": 6.8,
-                "ratingVotes": 370334,
-                "region": "US",
-                "runtime": 106,
-                "tconst": "tt0232500",
-                "title": "The Fast and the Furious",
-                "writerNames": [
-                    "Ken Li",
-                    "Gary Scott Thompson",
-                    "Erik Bergquist",
-                    "David Ayer",
-                ],
-                "writers": ["nm0508446", "nm0860155", "nm0074980", "nm0043742"],
-                "year": 2001,
-            },
-            {
-                "adult": False,
-                "directorNames": ["Ron Howard"],
-                "directors": ["nm0000165"],
-                "genres": ["Action", "Biography", "Drama"],
-                "poster": "https://image.tmdb.org/t/p/w200/uWcMgxO3p3qwVFUxsRz1HbTzGvT.jpg",
-                "rating": 8.1,
-                "ratingVotes": 456575,
-                "region": "US",
-                "runtime": 123,
-                "tconst": "tt1979320",
-                "title": "Rush",
-                "writerNames": ["Peter Morgan"],
-                "writers": ["nm0604948"],
-                "year": 2013,
-            },
-        ],
-        "directorwriter": [
-            {
-                "adult": False,
-                "directorNames": ["Justin Lin"],
-                "directors": ["nm0510912"],
-                "genres": ["Action", "Adventure", "Crime"],
-                "poster": "https://image.tmdb.org/t/p/w200/wXXYH1VGyVEE2PQS6WvzejZdsou.jpg",
-                "rating": 7.3,
-                "ratingVotes": 369017,
-                "region": "US",
-                "runtime": 130,
-                "tconst": "tt1596343",
-                "title": "Fast Five",
-                "writerNames": ["Chris Morgan", "Gary Scott Thompson"],
-                "writers": ["nm0604555", "nm0860155"],
-                "year": 2011,
-            },
-            {
-                "adult": False,
-                "directorNames": ["Justin Lin"],
-                "directors": ["nm0510912"],
-                "genres": ["Action", "Crime", "Thriller"],
-                "poster": "https://image.tmdb.org/t/p/w200/bOFaAXmWWXC3Rbv4u4uM9ZSzRXP.jpg",
-                "rating": 5.2,
-                "ratingVotes": 104278,
-                "region": "US",
-                "runtime": 143,
-                "tconst": "tt5433138",
-                "title": "F9: The Fast Saga",
-                "writerNames": [
-                    "Daniel Casey",
-                    "Justin Lin",
-                    "Alfredo Botello",
-                    "Gary Scott Thompson",
-                ],
-                "writers": ["nm0143403", "nm0510912", "nm2073574", "nm0860155"],
-                "year": 2021,
-            },
-        ],
-        "genre": [
-            {
-                "adult": False,
-                "directorNames": ["James Wan"],
-                "directors": ["nm1490123"],
-                "genres": ["Action", "Adventure", "Thriller"],
-                "poster": "https://image.tmdb.org/t/p/w200/wurKlC3VKUgcfsn0K51MJYEleS2.jpg",
-                "rating": 7.1,
-                "ratingVotes": 377187,
-                "region": "US",
-                "runtime": 137,
-                "tconst": "tt2820852",
-                "title": "Furious 7",
-                "writerNames": ["Chris Morgan", "Gary Scott Thompson"],
-                "writers": ["nm0604555", "nm0860155"],
-                "year": 2015,
-            },
-            {
-                "adult": False,
-                "directorNames": ["Lana Wachowski", "Lilly Wachowski"],
-                "directors": ["nm0905154", "nm0905152"],
-                "genres": ["Action", "Sci-Fi"],
-                "poster": "https://image.tmdb.org/t/p/w200/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-                "rating": 8.7,
-                "ratingVotes": 1780724,
-                "region": "US",
-                "runtime": 136,
-                "tconst": "tt0133093",
-                "title": "The Matrix",
-                "writerNames": ["Lilly Wachowski", "Lana Wachowski"],
-                "writers": ["nm0905152", "nm0905154"],
-                "year": 1999,
-            },
-        ],
-    }, 200
+    return dummy_similar
 
 
 # Looks up a movie in the database and returns the (parsed) information in a dictionary.
@@ -300,9 +158,10 @@ def close_connection(_):
 if __name__ == "__main__":
     # Initialize the similarity model, then start the server
     with app.app_context():
+        start = time.time()
         print("Initializing similarity model...", end=" ", flush=True)
         _, wikipedia = get_dbs()
         init_model(wikipedia)
-        print("Done!")
+        print(f"Done [{(time.time() - start):.1f}s]")
 
     app.run()

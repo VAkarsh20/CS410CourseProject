@@ -1,4 +1,4 @@
-import os, tqdm, pickle, re, string, itertools
+import os, tqdm, pickle, re, string, itertools, math
 import numpy as np
 from multiprocessing import Pool, cpu_count
 from nltk.tokenize import word_tokenize
@@ -21,7 +21,25 @@ def get_movie_similarity_scores(tconst):
     if _model is None:
         return None
 
+    # Unpack model
     tconst_map, similarity_matrix, wikipedia = _model
+
+    # Lookup this movie in the similarity table
+    similarity = similarity_matrix[tconst_map[tconst]]
+
+    # Reverse argsort to find the indices of the movies that are most similar
+    similarity_idxs = np.argsort(similarity).flatten()[::-1]
+
+    # Map to list of (tconst, similarity_score)
+    result = map(lambda i: (tconst_map.inverse[i], similarity[i]), similarity_idxs)
+
+    # Remove any entry where the similarity is zero
+    result = filter(lambda e: not math.isclose(e[1], 0), result)
+
+    # Remove the first entry, since that (should) be itself
+    next(result)
+
+    return list(result)
 
 
 # Initializes the similarity model into global memory
@@ -44,7 +62,7 @@ def _build_similarity_model(wikipedia):
             pickle.dump(wikipedia, f)
 
     # Extract tconsts/entries to separate lists
-    tconsts, entries = zip(*wikipedia.entries())
+    tconsts, entries = zip(*wikipedia.items())
     tconsts, entries = list(tconsts), list(entries)
 
     # Build cosine similarity matrix M using the entire corpus
