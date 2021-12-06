@@ -80,5 +80,21 @@ A `movie` object has the following JSON schema:
   "directorwriter": Array[movie], // similar movies by the same director/writer
   "genre": Array[movie] // similar movies in the same genre
 }
+```
 
 The **optional** `limit` parameter can be used to limit how many movies are returned for _each_ category. By default, all movies that had a similarity score greater than `0` can be returned.
+
+
+### How it works
+
+In order to rank movies based on the similarity between their Wikipedia descriptions, the server constructs a similarity model. Before the model can be constructed, we first need to pre-process the raw dataset consisting of the "Critical response" section of the Wikipedia page for each movie. Without pre-processing the data, not only would the model's size blow up, it would be less useful as the quality of the dataset would lend itself to providing good similarity measures between movies. The following pre-processing steps were applied using `nltk`:
+
+- Removing unnecessary whitespace characters, non-ASCII characters, and citations
+- Removing punctuation
+- Removing stopwords ("the", "is", etc)
+- Lowercasing
+- Stemming
+
+Once the data is pre-processed, the entire corpus of text is transformed to counts using `scikit-learn`'s TF-IDF vectorizer. Then, the cosine similarity metric is calculated for each pair of movies, ultimately resulting in a (rather large) lookup table `M` where `M[i][j]` is the cosine similarity between the movies with index `i` and `j`. 
+
+Translating the lookup table into movie recommendations is rather straightforward: we simply look at a single row `i` of `M` and extract the (`j`, score) pairs for each *other* movie `j` in the dataset. We can then sort these scores in reverse order, remove any movies with 0-score, and we have our final list of similar movies ordered from most-similar to least-similar. These results can further be decomposed into similar movies by the same director or of the same genre.
