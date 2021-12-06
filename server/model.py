@@ -6,38 +6,74 @@ from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from bidict import bidict
 
-MODEL_PATH = "model.p"
+# File to store pickled model resources in
+MODEL_FILE = "model_res.p"
 
-# Loads or builds an n x n matrix M
-# M[tconst1][tconst2] represents the similarity between the movies
-# tconst1 and tconst2.
-def load_or_build_model(imdb, wikipedia, pool):
+# Global variable to store model
+_model = None
 
-    # If a previous model has already been build and exists, load it
-    # Otherwise, we need to construct the model.
-    if os.path.exists(MODEL_PATH):
-        return pickle.load(open(MODEL_PATH, "rb"))
+# Returns the a list of [(tconst, similarity_score)]
+# in descending sorted order of similarity score
+def get_movie_similarity_scores(tconst):
+    global _model
+    if _model is None:
+        return None
 
-    # Tokenize each wikipedia entry
+    tconst_map, similarity_matrix, wikipedia = _model
+
+
+# Initializes the similarity model into global memory
+def init_model(wikipedia):
+    global _model
+    _model = _build_similarity_model(wikipedia)
+
+
+# Builds an n x n matrix M and corresponding index->tconst list L
+# M[i][j] is the cosine similarity between the tconsts L[i] and L[j]
+def _build_similarity_model(wikipedia):
+    # Load the preprocessed Wikipedia dataset from file if we have it
+    if os.path.exists(MODEL_FILE):
+        wikipedia = pickle.load(open(MODEL_FILE, "rb"))
+    # Otherwise, we need to make it ourselves
+    else:
+        wikipedia = _preprocess_wikipedia(wikipedia)
+        # Dump post-processed Wikipedia dataset to file
+        with open(MODEL_FILE, "wb") as f:
+            pickle.dump(wikipedia, f)
+
+    # Extract tconsts/entries to separate lists
+    tconsts, entries = zip(*wikipedia.entries())
+    tconsts, entries = list(tconsts), list(entries)
+
+    # Build cosine similarity matrix M using the entire corpus
+    vectorizer = TfidfVectorizer()
+    entries_vectorized = vectorizer.fit_transform(entries)
+    similarity_matrix = cosine_similarity(entries_vectorized, entries_vectorized)
+
+    # Form index->tconst list L
+    tconst_map = bidict({tconst: i for tconst, i in zip(tconsts, range(len(tconsts)))})
+
+    return tconst_map, similarity_matrix, wikipedia
+
+
+# Preprocess the entire Wikipedia dataset in parallel
+def _preprocess_wikipedia(wikipedia):
+    # Parallel map the entry parser to generate a new, cleaned dataset
+    pool = Pool(processes=cpu_count())
     wikipedia = {
         tconst: entry
-        for (tconst, entry) in pool.map(tokenize_wikipedia_entry, wikipedia.items())
+        for (tconst, entry) in pool.map(_preprocess_wikipedia_entry, wikipedia.items())
     }
+    pool.close()
 
-    # Build cosine similarity matrix using the entire corpus
-    keys, values = list(wikipedia.keys()), list(wikipedia.values())
-    vectorizer = TfidfVectorizer()
-    X = vectorizer.fit_transform(values)
-    sim = cosine_similarity(X, X)
-
-    # Return ordered key list and similarity matrix
-    return keys, sim
+    return wikipedia
 
 
-# Tokenize the contents of the Wikipedia dataset
-def tokenize_wikipedia_entry(item):
-    key, entry = item
+# Preprocess the contents of a single Wikipedia entry
+def _preprocess_wikipedia_entry(item):
+    tconst, entry = item
 
     # Replace newlines with spaces
     entry = entry.replace("\n", " ")
@@ -73,15 +109,4 @@ def tokenize_wikipedia_entry(item):
     # Rejoin entry
     entry = " ".join(entry)
 
-    return key, entry
-
-
-# This file should be imported by the server, but here's some test driver code.
-if __name__ == "__main__":
-    from app import load_imdb, load_wikipedia
-
-    imdb = load_imdb()
-    wikipedia = load_wikipedia()
-
-    with Pool(processes=cpu_count()) as pool:
-        wikipedia = load_or_build_model(imdb, wikipedia, pool)
+    return tconst, entry

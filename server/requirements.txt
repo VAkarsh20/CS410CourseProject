@@ -1,5 +1,6 @@
 appnope==0.1.2
 backcall==0.2.0
+bidict==0.21.4
 black==21.11b1
 click==8.0.3
 cycler==0.11.0
@@ -32,8 +33,11 @@ Pygments==2.10.0
 pyparsing==3.0.6
 python-dateutil==2.8.2
 regex==2021.11.10
+scikit-learn==1.0.1
+scipy==1.7.3
 setuptools-scm==6.3.2
 six==1.16.0
+threadpoolctl==3.0.0
 toml==0.10.2
 tomli==1.2.2
 tqdm==4.62.3

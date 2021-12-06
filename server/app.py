@@ -1,5 +1,7 @@
 from flask import Flask, request, g
+from model import init_model, get_movie_similarity_scores
 import sqlite3, pickle
+
 
 # Change these if you are using different locations for the data files!
 IMDB_DB = "imdb.db"
@@ -27,6 +29,7 @@ def get_movie():
 
 @app.route("/similar")
 def get_similar():
+
     # Invalid request
     if "tconst" not in request.args or (
         "by" in request.args
@@ -39,6 +42,8 @@ def get_similar():
 
     # Extract filters (directors, writers, genres)
     by = None if "by" not in request.args else request.args["by"]
+
+    get_movie_similarity_scores(tconst)
 
     _, wikipedia = get_dbs()
     return wikipedia[tconst]
@@ -284,10 +289,20 @@ def get_dbs():
 load_imdb = lambda: sqlite3.connect(IMDB_DB)
 load_wikipedia = lambda: pickle.load(open(WIKIPEDIA_DB, "rb"))
 
-
 # Automatically close the DB connection on application exit
 @app.teardown_appcontext
 def close_connection(_):
     db = getattr(g, "_imdb", None)
     if db is not None:
         db.close()
+
+
+if __name__ == "__main__":
+    # Initialize the similarity model, then start the server
+    with app.app_context():
+        print("Initializing similarity model...", end=" ", flush=True)
+        _, wikipedia = get_dbs()
+        init_model(wikipedia)
+        print("Done!")
+
+    app.run()
