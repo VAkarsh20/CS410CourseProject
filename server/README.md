@@ -13,7 +13,7 @@ Once the data files have been acquired, running the server is rather simple, pro
 
 1. (Optional) Setup a virtual environment with `python -m venv venv` and activate it with `source venv/bin/activate`.
 2. Install the required dependencies by running `pip install -r requirements.txt`.
-3. Start the server by running `python app.py`. The server should now be available at `127.0.0.1` on the default Flask port. You can test this by opening up a browser and trying to fetch the movie information for *The Fast and the Furious: Tokyo Drift (2006)*. If Flask started the server on port 5000, you could do this by accessing `http://127.0.0.1:5000/movie?tconst=tt0463985`. You should see the following output:
+3. Start the server by running `python app.py`. This may take up to a minute the first time the server is started, since the similarity model has to be built from scratch. The server should then be available at `127.0.0.1` on the default Flask port. You can test this by opening up a browser and trying to fetch the movie information for *The Fast and the Furious: Tokyo Drift (2006)*. If Flask started the server on port 5000, you could do this by accessing `http://127.0.0.1:5000/movie?tconst=tt0463985`. You should see the following output:
 
 ```json
 {
@@ -81,4 +81,4 @@ A `movie` object has the following JSON schema:
   "genre": Array[movie] // similar movies in the same genre
 }
 
-The `limit` parameter can be used to limit how many movies are returned for _each_ category.
+The **optional** `limit` parameter can be used to limit how many movies are returned for _each_ category. By default, all movies that had a similarity score greater than `0` can be returned.
