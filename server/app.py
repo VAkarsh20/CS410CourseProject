@@ -32,23 +32,43 @@ def get_movie():
 def get_similar():
 
     # Invalid request
-    if "tconst" not in request.args or (
-        "by" in request.args
-        and request.args["by"].lower() not in ["directorwriter", "genre"]
-    ):
+    if "tconst" not in request.args:
         return "Invalid request!", 400
+
+    # Parse limit, if provided
+    limit = None
+    if "limit" in request.args:
+        limit = int(request.args["limit"])
 
     # Extract title ID
     tconst = request.args["tconst"]
 
-    # Extract filters (directors, writers, genres)
-    by = None if "by" not in request.args else request.args["by"]
+    # Lookup this movie
+    movie = lookup_movie(tconst)
 
     # Get [(tconst, similarity score)] list from model
     similarity_scores = get_movie_similarity_scores(tconst)
 
     # Remap tconsts --> movie info
-    similarity_scores = list(map())
+    similar_movies_all = list(map(lambda e: lookup_movie(e[0]), similarity_scores))
+    similar_movies_directorwriter = []
+    similar_movies_genre = []
+
+    # Build similar movie list for same director/writer and genre
+    for similar_movie in similar_movies_all:
+        if any(x in movie["directors"] for x in similar_movie["directors"]) or any(
+            x in movie["writers"] for x in similar_movie["writers"]
+        ):
+            similar_movies_directorwriter.append(similar_movie)
+
+        if any(x in movie["genres"] for x in similar_movie["genres"]):
+            similar_movies_genre.append(similar_movie)
+
+    return {
+        "all": similar_movies_all[:limit],
+        "directorwriter": similar_movies_directorwriter[:limit],
+        "genre": similar_movies_genre[:limit],
+    }
 
 
 # Dummy endpoint for /movie which doesn't require a database

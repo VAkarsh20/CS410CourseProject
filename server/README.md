@@ -72,7 +72,7 @@ A `movie` object has the following JSON schema:
 
 ### Schema - `/similar`
 
-`GET /similar?tconst=<some tconst>` simply returns a set of lists of similar movies with the following schema.
+`GET /similar?tconst=<some tconst>?limit=<some num>` simply returns a set of lists of similar movies with the following schema.
 
 ```json
 {
@@ -80,3 +80,5 @@ A `movie` object has the following JSON schema:
   "directorwriter": Array[movie], // similar movies by the same director/writer
   "genre": Array[movie] // similar movies in the same genre
 }
+
+The `limit` parameter can be used to limit how many movies are returned for _each_ category.
