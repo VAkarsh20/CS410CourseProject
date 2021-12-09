@@ -1,6 +1,6 @@
 {
-  "name": "Getting Started Example",
-  "description": "Build an Extension!",
+  "name": "IMDb Movie Recommender",
+  "description": "Chrome Extension that can recommend similar movies on IMDb!",
   "version": "1.0",
   "manifest_version": 3,
   "background": {
