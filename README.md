@@ -1,4 +1,4 @@
-# 1. Overview
+# 1. Overview (with Presentation)
 This project is a Chrome extension used for retrieving movies simliar to the movie present on the user's tab. When a user searches for a movie on Chrome and opens the extension, movie metadata and similar movies will be presented. 
 
 Detailed README files can be found in each sub-folder describing the specific implementation of all the components of this project. For a high-level overview of its functionality, basic installation instructions, and a demonstration of the Chrome extension being used please refer to this video: https://www.youtube.com/watch?v=_hyaSEG3M44
@@ -53,6 +53,9 @@ unknown
 unknown
 
 # 4. Team Member Contributions
-The development team consisted of 5 members, so it was expected that 100 hours of work was done for the project.
-
-Brief description of contribution of each team member in case of a multi-person team. Note that if you are in a team, it is your responsibility to figure out how to contribute to your group project, so you will need to act proactively and in a timely manner if your group coordinator has not assigned a task to you. There will be no opportunity to make up for any task that you failed to accomplish. In general, all the members of a team will get the same grade for the project unless the documentation submission indicates that some member(s) only superficially participated in the project without doing much actual work; in that case, we will discount the grade. Everyone is expected to spend at least 20 hours to seriously work on your course project as a minimum, not including the time spent for preparing the documentation.
+The development team consisted of 5 members, so it was expected that 100 hours of work was done for the project. The each team member did roughly 20 hours of work and their contributions were as follows:
+* Akarsh Vankayalapati (Captain): Akarsh was the acting project manager of the group and set weekly checkins with the group to see how the project was going and what was needed to get past and hurdles hindering productivity. Along with this, Akarsh designed the project at a very high level, delegated tasks out to other members, and helped with the implementation of the front-end.
+* John Armgardt: John was in charge of making the API calls to IMDb and Wikipedia and scraping the data to be put into the database.
+* Ian Goodwin: Ian was in charge of the front-end implementation of the project that took end points from the back-end and displayed them with the chrome extension.
+* Aditya Mansharamani: Adithya was in charge of the Backend implementation of the project as he helped connect the parts John and Spencer were working on to develop the model overall. 
+* Spencer Sullivan-Hayes: Spencer was helped create the Vector Space for the model with John. Also, Spencer was in charge of the presentation portion of the project.
