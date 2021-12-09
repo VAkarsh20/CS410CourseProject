@@ -1,3 +1,3 @@
 # CourseProject
 
-Please fork this repository and paste the github link of your fork on Microsoft CMT. Detailed instructions are on Coursera under Week 1: Course Project Overview/Week 9 Activities.
+Detailed README files can be found in each sub-folder describing the specific implementation of all the components of this project. For a high-level overview of its functionality, basic installation instructions, and a demonstration of the Chrome extension being used please refer to this video: https://www.youtube.com/watch?v=_hyaSEG3M44
