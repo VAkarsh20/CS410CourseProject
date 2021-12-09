@@ -28,3 +28,8 @@ their picture, title, and rating. The user can then click on any title to be tak
 The `baseurl` const in popup.js gives the user the option to swap between making local requests or requests to an external server.
 The local option requires the user to be running the server, while the remote option will work from anywhere without need for a local
 server instance.
+
+### Demonstration
+
+The following video demonstrates the installation of the Chrome extension directly from this repository, as well as some basic use with 
+two movies on the IMDB website: https://www.youtube.com/watch?v=_hyaSEG3M44
