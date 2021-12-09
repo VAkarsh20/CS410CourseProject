@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="button.css">
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body class="frame">
+    <div id="Content" style="display: none;">
+      <div class="center">
+        <h1>Here Are Some Similar Movies to <span id="BaseMovie"></span>.</h1>
+      </div>
+      <div class="movie-container" id="Movies">
+        <div class="movie">
+          <img class="movie-img" src="https://image.tmdb.org/t/p/w200/cm2ffqb3XovzA5ZSzyN3jnn8qv0.jpg">
+          <h2 class="movie-title">Fast and Furious: Tokyo Drift</h2>
+          <h3 class="movie-stars"><span class="yellow">⭐</span> 6.0/10</h3>
+        </div>
+        <!-- Insert Movies Here-->
+      </div>
+    </div>
+    <div id="Loading">
+      <div id="test" class="center">
+        <h1>Finding You Some Great Movies</h1>
+      </div>
+      <div class="loader">
+        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      </div>
+    </div>
+    <div id="Error" style="display: none;">
+      <div class="center">
+        <h1>Something Went Wrong.</h1>
+      </div>
+      <img class="error-picture" src="/images/error_picture.png">
+      <div class="center">
+        <h1>Make sure you are on an <span> <a class="imdb" href="https://www.imdb.com" target="_blank">IMDb
+        </a></span> movie page so we can find you some movies!</h1>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

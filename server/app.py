@@ -177,6 +177,12 @@ def close_connection(_):
     if db is not None:
         db.close()
 
+#add CORS passthrough after request
+@app.after_request # blueprint can also be app~~
+def after_request(response):
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
+    return response
 
 if __name__ == "__main__":
     # Initialize the similarity model, then start the server
