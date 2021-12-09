@@ -34,23 +34,34 @@ The `/similar` endpoint is used to retrieve similar movies for a given title num
 `model.py` is used to calculate and store the similarity scores between each movie in the database. To achieve this, first, the Wikipedia entires must be preprocessed and cleaned. This involves removing unwanted characters, like non-ASCII, citations, and newlines; and tokenizing the entry, while also removing punctuation and stop words. Then, a cosine similarity matrix is built over the entire corpus using Scikit-learn. Finally, similarity scores for a given movie can be retrieved, and a sorted list of the other movies' title numbers and similarity scores are provided.
 
 ## `/chrome-extension/`
-unknown
+The front-end of the project primarily uses the `popup.js` file for its logic. 
+
+When a user clicks on the extension on an IMDb movie page, the front-end first grabs the title number from the page URL. Next, it sends an HTTP request to the back-end to retrieve information about the current movie. It then sends another HTTP request to the back-end to retrieve similar movies. Finally, the movie table is built and displayed to the user.
 
 # 3. Usage Documentation
-## Database Generation
 
+## Installation
+1. Open the Extension Management page by navigating to [`chrome://extensions`](chrome://extensions).
+    Alternatively, open this page by clicking on the Extensions menu button and selecting Manage Extensions at the bottom of the menu.
+    Alternatively, open this page by clicking on the Chrome menu, hovering over More Tools then selecting Extensions
 
+2. Enable Developer Mode by clicking the toggle switch next to Developer mode.
+
+3. Click the Load unpacked button and select the extension directory.
+### Local hosting
+By default, the project is host on the cloud. However, it is also possible to host it on a local machine. To do this, first comment out line 3 and uncomment line 2 in `/chrome_extension/popup.js`. This changes the base URL to a local URL. Next, retrieve the databases for the back-end. Finally, run the Flask app available in `server/app.py` to access the back-end. 
+#### Database Generation
 The scripts in the project are meant to assist in the creation of two datasets:
 
 * [imdb.db (Sqlite3 DB, ~1 GB)](https://drive.google.com/file/d/1jlYawRw3HDthGsxZNQYrWliYEGztTVCQ/view?usp=sharing)
 * [wikipedia.p (Python dictionary, ~15 MB)](https://drive.google.com/file/d/1LDV9-5GKlacbMOxiZ613_69EL4G7aQXS/view?usp=sharing)
 
 These database files take a non-trivial amount of time to generate. As such, they have been uploaded elsewhere and should be checked out directly to be used in the application. The scripts located in the repoository have only been uploaded for reproducability. See the [Database README](https://github.com/VAkarsh20/CS410CourseProject/blob/main/database/README.md) for more information.
-
-## Installation
-unknown
 ## Usage
-unknown
+The extension works off of IMDb. Once on a page for a movie, click on the extension, and it will pull the `tconst` identifier from the URL and search the database for the movie.
+
+After the movie is found, the extension will then request 20 of the most similar movies. These will be then displayed on cards with
+their picture, title, and rating. The user can then click on any title to be taken to the movie's IMDb page if desired.
 
 # 4. Team Member Contributions
 The development team consisted of 5 members, so it was expected that 100 hours of work was done for the project. The each team member did roughly 20 hours of work and their contributions were as follows:
